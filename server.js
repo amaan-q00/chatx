@@ -20,7 +20,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
+app.get("/ping",(req,res)=>res.send("pong"))
 let connectedUsers = {};
 
 io.on("connection", (socket) => {
