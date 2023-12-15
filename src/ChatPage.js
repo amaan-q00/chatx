@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:3001");
+const socket = io("https://chatxnode.onrender.com");
 
 function ChatPage() {
   const { roomKey } = useParams();
