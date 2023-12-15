@@ -13,7 +13,7 @@ const io = new Server(server, {
 });
 
 const corsOptions = {
-  origin: "http://localhost:3002", // Replace with your frontend origin
+  origin: "https://sweet-chatx-18a218.netlify.app", // Replace with your frontend origin
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
   optionsSuccessStatus: 204,
