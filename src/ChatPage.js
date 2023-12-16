@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
+import { useReactToPrint } from 'react-to-print';
 
 const socket = io("https://chatxnode.onrender.com");
 
@@ -8,6 +9,7 @@ function ChatPage() {
   const { roomKey } = useParams();
   const location = useLocation();
   const [messages, setMessages] = useState([]);
+  const [visibleMessages, setVisibleMessages] = useState(50);
   let [members, setMembers] = useState([]);
   let nav = useNavigate();
   const [messageInput, setMessageInput] = useState("");
@@ -17,11 +19,8 @@ function ChatPage() {
   };
   const messageList = useRef(null);
   const scrollToBottom = () => {
-    document
-      .querySelector("#myscroller")
-      .scrollIntoView({ behaviour: "smooth" });
-    // console.log(messageList);
-    // messageList.current.scrollIntoView({ behavior: "smooth" });
+   
+    messageList?.current?.lastElementChild?.scrollIntoView({ behaviour: "smooth" });
   };
   useEffect(() => {
     socket.connect();
@@ -31,12 +30,15 @@ function ChatPage() {
       if (message.members) {
         setMembers(message.members);
       }
+      setVisibleMessages(50)
       setMessages((prevMessages) => [...prevMessages, message]);
-      scrollToBottom();
+      setTimeout(() => {
+        scrollToBottom();
+      }, 100);
+      
     });
     // Join the specified room when the component mounts
     socket.emit("join room", { roomKey, nickName: location.state.name });
-    scrollToBottom();
   }, []);
 
   const sendMessage = () => {
@@ -47,6 +49,7 @@ function ChatPage() {
         owner: location.state.name,
         type: "text",
         members: null,
+        timeStamp: getFormattedTimestamp()
       });
       setMessageInput("");
     }
@@ -54,7 +57,28 @@ function ChatPage() {
   let copyToClipBoard = async () => {
     await navigator.clipboard.writeText(roomKey);
   };
-
+  const loadMore = () => {
+    // Increase the number of visible messages by 50
+    setVisibleMessages(prev => prev + 50);
+  };
+  const messagesToShow = messages.slice(-visibleMessages);
+  const handlePrint = useReactToPrint({
+    content: () => messageList.current,
+  });
+  function getFormattedTimestamp() {
+    const options = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    };
+  
+    const timestamp = new Date().toLocaleString('en-US', options);
+    return timestamp;
+  }
   return (
     <div className="chat-wrapper">
       <div className="chat-container">
@@ -71,9 +95,15 @@ function ChatPage() {
         <button className="leave-room-btn" onClick={leaveRoom}>
           LEAVE ROOM
         </button>
+        <button className="leave-room-btn" onClick={handlePrint}>
+          Export Chats
+        </button>
         <h4 className="online-members">{`${members.length} Online`}</h4>
-        <ul className="message-list">
-          {messages.map((message, index) => {
+        {messages.length > messagesToShow.length && <button className="leave-room-btn" onClick={loadMore}>
+          Load More
+        </button>}
+        <ul className="message-list" ref={messageList}>
+          {messagesToShow.map((message, index) => {
             if (message.type == "info") {
               return (
                 <li key={index} className={`info-message-item message-item`}>
@@ -96,14 +126,13 @@ function ChatPage() {
                     >{`${message.owner}`}</span>
                   )}
                   <span className={`text-message-text`}>{message.text}</span>
+                  <span className={`timestamp`}>{message?.timeStamp}</span>
                 </li>
               );
             } else {
             }
           })}
-          <div id="myscroller" ref={messageList}>
-            {" "}
-          </div>
+          
         </ul>
         <div className="message-input-container">
           <input

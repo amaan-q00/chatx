@@ -1,4 +1,23 @@
 /* App.css */
+
+@media print {
+  body * {
+      visibility: hidden !important;
+  }
+
+  .message-list, .message-list * {
+      visibility: visible !important;
+  }
+
+  .message-list {
+    display: block !important; /* Not really needed in all cases */
+    position: relative !important;
+    width: auto !important;
+    overflow-y: auto !important;
+    max-height: unset !important;
+    margin: 0 10px !important;
+  }
+}
 html,
 body {
   margin: 0 !important;
@@ -111,6 +130,7 @@ body {
 
 .leave-room-btn {
   padding: 10px 20px;
+  margin: 5px;
   font-size: 16px;
   background: #ff6e7f;
   border: none;
@@ -178,6 +198,25 @@ body {
 .other-owner-message-item > .text-message-text {
   color: #fff;
   margin-right: auto;
+}
+
+.self-owner-message-item > .timestamp{
+  margin: 5px 0 0 auto;
+  font-weight: bolder;
+  display: inline-block;
+  font-size: x-small;
+  margin-right: auto;
+  font-style: italic;
+  color: #48ff00;
+}
+.other-owner-message-item > .timestamp{
+  margin: 5px 0 auto 0;
+  font-weight: bolder;
+  display: inline-block;
+  font-size: x-small;
+  margin-right: auto;
+  font-style: italic;
+  color: #48ff00;
 }
 
 .message-input-container {

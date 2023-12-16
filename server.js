@@ -22,7 +22,20 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.get("/ping",(req,res)=>res.send("pong"))
 let connectedUsers = {};
+function getFormattedTimestamp() {
+  const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  };
 
+  const timestamp = new Date().toLocaleString('en-US', options);
+  return timestamp;
+}
 io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     let disconnectedUserDetails = connectedUsers[socket.id];
@@ -36,6 +49,7 @@ io.on("connection", (socket) => {
         members: Object.values(connectedUsers).filter(
           (t) => t.roomKey == disconnectedUserDetails.roomKey
         ),
+        timeStamp: getFormattedTimestamp()
       });
     }
   });
@@ -63,6 +77,7 @@ io.on("connection", (socket) => {
       members: Object.values(connectedUsers).filter(
         (t) => t.roomKey == roomKey
       ),
+      timeStamp: getFormattedTimestamp()
     });
   });
 });

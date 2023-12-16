@@ -12,13 +12,14 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.0",
     "react-scripts": "5.0.1",
+    "react-to-print": "^2.14.15",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
     "uuid": "^9.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start-node":"node server.js",
+    "start-node": "node server.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
