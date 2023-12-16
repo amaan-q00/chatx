@@ -62,9 +62,15 @@ function ChatPage() {
     setVisibleMessages(prev => prev + 50);
   };
   const messagesToShow = messages.slice(-visibleMessages);
-  const handlePrint = useReactToPrint({
+  const handlePrint = ()=>{
+    setVisibleMessages(messages.length)
+    setTimeout(()=>{  
+    useReactToPrint({
     content: () => messageList.current,
-  });
+  })
+    },100)
+  }
+                      
   function getFormattedTimestamp() {
     const options = {
       weekday: 'long',
