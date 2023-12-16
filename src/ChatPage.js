@@ -99,10 +99,11 @@ function ChatPage() {
           Export Chats
         </button>
         <h4 className="online-members">{`${members.length} Online`}</h4>
-        {messages.length > messagesToShow.length && <button className="leave-room-btn" onClick={loadMore}>
+        
+        <ul className="message-list" ref={messageList}>
+  {messages.length > messagesToShow.length && <button id="load-more" className="leave-room-btn" onClick={loadMore}>
           Load More
         </button>}
-        <ul className="message-list" ref={messageList}>
           {messagesToShow.map((message, index) => {
             if (message.type == "info") {
               return (
