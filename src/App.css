@@ -164,6 +164,7 @@ body {
 
 .info-message-text {
   color: #fff;
+  margin: auto;
 }
 
 .self-owner-message-item {
@@ -249,7 +250,7 @@ body {
   margin-left: 10px;
   padding: 10px 20px;
   font-size: 16px;
-  background: #4facfe;
+  background: #ff6e7f;
   color: #fff;
   border: none;
   border-radius: 5px;

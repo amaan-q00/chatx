@@ -62,14 +62,12 @@ function ChatPage() {
     setVisibleMessages(prev => prev + 50);
   };
   const messagesToShow = messages.slice(-visibleMessages);
-  const handlePrint = ()=>{
-    setVisibleMessages(messages.length)
-    setTimeout(()=>{  
-    useReactToPrint({
+  const handlePrint = useReactToPrint({
     content: () => messageList.current,
   })
-    },100)
-  }
+
+   
+  
                       
   function getFormattedTimestamp() {
     const options = {
@@ -101,7 +99,13 @@ function ChatPage() {
         <button className="leave-room-btn" onClick={leaveRoom}>
           LEAVE ROOM
         </button>
-        <button className="leave-room-btn" onClick={handlePrint}>
+        <button className="leave-room-btn" onClick={()=>{
+          setVisibleMessages(messages?.length);
+          setTimeout(() => {
+            handlePrint()  
+          }, 100);
+          
+          }}>
           Export Chats
         </button>
         <h4 className="online-members">{`${members.length} Online`}</h4>
