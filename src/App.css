@@ -150,7 +150,7 @@ body {
 .message-list {
   list-style: none;
   padding: 0;
-  max-height: 60vh;
+  max-height: 65vh;
   overflow-y: auto;
   background: #1b1b1b; /* Dark background for messages */
   border-radius: 8px;
