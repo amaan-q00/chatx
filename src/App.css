@@ -17,6 +17,10 @@
     max-height: unset !important;
     margin: 0 10px !important;
   }
+  #load-more{
+    display:none;
+    visibility:hidden;
+  }
 }
 html,
 body {
@@ -146,7 +150,7 @@ body {
 .message-list {
   list-style: none;
   padding: 0;
-  max-height: 560px;
+  max-height: 60vh;
   overflow-y: auto;
   background: #1b1b1b; /* Dark background for messages */
   border-radius: 8px;
@@ -189,6 +193,7 @@ body {
   font-size: smaller;
   margin-right: auto;
   font-style: italic;
+  color: #fff;
 }
 
 .self-owner-message-item > .text-message-text {
@@ -207,7 +212,7 @@ body {
   font-size: x-small;
   margin-right: auto;
   font-style: italic;
-  color: #48ff00;
+  color: #626264;
 }
 .other-owner-message-item > .timestamp{
   margin: 5px 0 auto 0;
@@ -216,7 +221,7 @@ body {
   font-size: x-small;
   margin-right: auto;
   font-style: italic;
-  color: #48ff00;
+  color: #626264;
 }
 
 .message-input-container {
