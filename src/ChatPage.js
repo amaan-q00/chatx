@@ -142,6 +142,7 @@ function ChatPage() {
             onChange={(e) => setMessageInput(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
+                e.preventDefault();
                 sendMessage();
               }
             }}
