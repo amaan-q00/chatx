@@ -13,27 +13,28 @@ const io = new Server(server, {
 });
 
 const corsOptions = {
-  origin: "https://sweet-chatx-18a218.netlify.app", // Replace with your frontend origin
+  // origin: "https://sweet-chatx-18a218.netlify.app", // Replace with your frontend origin
+  origin: "http://localhost:3002/",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
   optionsSuccessStatus: 204,
 };
 
 app.use(cors(corsOptions));
-app.get("/ping",(req,res)=>res.send("pong"))
+app.get("/ping", (req, res) => res.send("pong"));
 let connectedUsers = {};
 function getFormattedTimestamp() {
   const options = {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+    weekday: "long",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
     hour12: true,
   };
 
-  const timestamp = new Date().toLocaleString('en-US', options);
+  const timestamp = new Date().toLocaleString("en-US", options);
   return timestamp;
 }
 io.on("connection", (socket) => {
@@ -49,12 +50,13 @@ io.on("connection", (socket) => {
         members: Object.values(connectedUsers).filter(
           (t) => t.roomKey == disconnectedUserDetails.roomKey
         ),
-        timeStamp: getFormattedTimestamp()
+        timeStamp: getFormattedTimestamp(),
       });
     }
   });
   // Handle chat messages
   socket.on("chat message", (message) => {
+    console.log(message.text);
     io.sockets.emit(message.room, message);
   });
 
@@ -77,7 +79,7 @@ io.on("connection", (socket) => {
       members: Object.values(connectedUsers).filter(
         (t) => t.roomKey == roomKey
       ),
-      timeStamp: getFormattedTimestamp()
+      timeStamp: getFormattedTimestamp(),
     });
   });
 });

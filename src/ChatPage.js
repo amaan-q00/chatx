@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
-import { useReactToPrint } from 'react-to-print';
+import { useReactToPrint } from "react-to-print";
 
-const socket = io("https://chatxnode.onrender.com");
+// const socket = io("https://chatxnode.onrender.com");
+const socket = io("http://localhost:3001/");
 
 function ChatPage() {
   const { roomKey } = useParams();
@@ -19,8 +20,9 @@ function ChatPage() {
   };
   const messageList = useRef(null);
   const scrollToBottom = () => {
-   
-    messageList?.current?.lastElementChild?.scrollIntoView({ behaviour: "smooth" });
+    messageList?.current?.lastElementChild?.scrollIntoView({
+      behaviour: "smooth",
+    });
   };
   useEffect(() => {
     socket.connect();
@@ -30,28 +32,47 @@ function ChatPage() {
       if (message.members) {
         setMembers(message.members);
       }
-      setVisibleMessages(50)
+      setVisibleMessages(50);
       setMessages((prevMessages) => [...prevMessages, message]);
       setTimeout(() => {
         scrollToBottom();
       }, 100);
-      
     });
     // Join the specified room when the component mounts
     socket.emit("join room", { roomKey, nickName: location.state.name });
   }, []);
-
   const sendMessage = () => {
     if (messageInput.trim() !== "") {
-      socket.emit("chat message", {
+      let chatMsgObj = {
         text: messageInput,
         room: roomKey,
         owner: location.state.name,
         type: "text",
         members: null,
-        timeStamp: getFormattedTimestamp()
-      });
+        timeStamp: getFormattedTimestamp(),
+      };
       setMessageInput("");
+      socket.emit("chat message", chatMsgObj);
+    }
+  };
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      let chatMsgObj = {
+        text: file,
+        room: roomKey,
+        owner: location.state.name,
+        type: "image",
+        members: null,
+        timeStamp: getFormattedTimestamp(),
+      };
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        chatMsgObj.text = reader.result;
+      };
+      reader.readAsDataURL(file);
+      socket.emit("chat message", chatMsgObj);
     }
   };
   let copyToClipBoard = async () => {
@@ -59,28 +80,29 @@ function ChatPage() {
   };
   const loadMore = () => {
     // Increase the number of visible messages by 50
-    setVisibleMessages(prev => prev + 50);
+    setVisibleMessages((prev) => prev + 50);
   };
   const messagesToShow = messages.slice(-visibleMessages);
   const handlePrint = useReactToPrint({
     content: () => messageList.current,
-  })
-
-   
-  
-                      
+  });
+  const renderBufferAsImage = (buffer) => {
+    const uint8Array = new Uint8Array(buffer);
+    const base64String = btoa(String.fromCharCode.apply(null, uint8Array));
+    return `data:image/png;base64,${base64String}`;
+  };
   function getFormattedTimestamp() {
     const options = {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+      weekday: "long",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
       hour12: true,
     };
-  
-    const timestamp = new Date().toLocaleString('en-US', options);
+
+    const timestamp = new Date().toLocaleString("en-US", options);
     return timestamp;
   }
   return (
@@ -99,21 +121,29 @@ function ChatPage() {
         <button className="leave-room-btn" onClick={leaveRoom}>
           LEAVE ROOM
         </button>
-        <button className="leave-room-btn" onClick={()=>{
-          setVisibleMessages(messages?.length);
-          setTimeout(() => {
-            handlePrint()  
-          }, 100);
-          
-          }}>
+        <button
+          className="leave-room-btn"
+          onClick={() => {
+            setVisibleMessages(messages?.length);
+            setTimeout(() => {
+              handlePrint();
+            }, 100);
+          }}
+        >
           Export Chats
         </button>
         <h4 className="online-members">{`${members.length} Online`}</h4>
-        
+
         <ul className="message-list" ref={messageList}>
-  {messages.length > messagesToShow.length && <button id="load-more" className="leave-room-btn" onClick={loadMore}>
-          Load More
-        </button>}
+          {messages.length > messagesToShow.length && (
+            <button
+              id="load-more"
+              className="leave-room-btn"
+              onClick={loadMore}
+            >
+              Load More
+            </button>
+          )}
           {messagesToShow.map((message, index) => {
             if (message.type == "info") {
               return (
@@ -140,12 +170,43 @@ function ChatPage() {
                   <span className={`timestamp`}>{message?.timeStamp}</span>
                 </li>
               );
+            } else if (message.type === "image") {
+              return (
+                <li
+                  key={index}
+                  className={`${
+                    message?.owner == location.state.name
+                      ? "self-owner-message-item"
+                      : "other-owner-message-item"
+                  } message-item`}
+                >
+                  {message.owner !== location.state.name && (
+                    <span
+                      className={`message-owner`}
+                    >{`${message.owner}`}</span>
+                  )}
+                  <img
+                    src={renderBufferAsImage(message.text)}
+                    className="text-message-image"
+                    alt="Image"
+                  />
+                  <span className={`timestamp`}>{message?.timeStamp}</span>
+                </li>
+              );
             } else {
             }
           })}
-          
         </ul>
         <div className="message-input-container">
+          <label className="img-btn">
+            <input
+              className="img-btn-picker"
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+            />
+            🖼️
+          </label>
           <input
             className="message-input"
             type="text"
@@ -159,7 +220,7 @@ function ChatPage() {
             }}
           />
           <button className="send-btn" onClick={sendMessage}>
-            Send
+            send
           </button>
         </div>
       </div>

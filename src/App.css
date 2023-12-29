@@ -2,11 +2,12 @@
 
 @media print {
   body * {
-      visibility: hidden !important;
+    visibility: hidden !important;
   }
 
-  .message-list, .message-list * {
-      visibility: visible !important;
+  .message-list,
+  .message-list * {
+    visibility: visible !important;
   }
 
   .message-list {
@@ -17,9 +18,9 @@
     max-height: unset !important;
     margin: 0 10px !important;
   }
-  #load-more{
-    display:none !important;
-    visibility:hidden !important;
+  #load-more {
+    display: none !important;
+    visibility: hidden !important;
   }
 }
 html,
@@ -206,7 +207,7 @@ body {
   margin-right: auto;
 }
 
-.self-owner-message-item > .timestamp{
+.self-owner-message-item > .timestamp {
   margin: 5px 0 0 auto;
   font-weight: bolder;
   display: inline-block;
@@ -215,7 +216,7 @@ body {
   font-style: italic;
   color: #626264;
 }
-.other-owner-message-item > .timestamp{
+.other-owner-message-item > .timestamp {
   margin: 5px 0 auto 0;
   font-weight: bolder;
   display: inline-block;
@@ -247,8 +248,8 @@ body {
 }
 
 .send-btn {
-  margin-left: 10px;
-  padding: 10px 20px;
+  margin: 0 10px 0 10px;
+  padding: 10px 10px;
   font-size: 16px;
   background: #ff6e7f;
   color: #fff;
@@ -256,6 +257,22 @@ body {
   border-radius: 5px;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.img-btn {
+  margin: 0;
+  padding: 10px;
+  font-size: 20px;
+  background: transparent;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.img-btn-picker {
+  display: none;
+}
+.text-message-image {
 }
 #myscroller {
   height: 10px; /* Spacer to ensure scrolling works as expected */
