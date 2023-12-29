@@ -3,8 +3,8 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
 import { useReactToPrint } from "react-to-print";
 
-// const socket = io("https://chatxnode.onrender.com");
-const socket = io("http://localhost:3001/");
+const socket = io("https://chatxnode.onrender.com");
+// const socket = io("http://localhost:3001/");
 
 function ChatPage() {
   const { roomKey } = useParams();

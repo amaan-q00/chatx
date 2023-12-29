@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 
-// const socket = io("https://chatxnode.onrender.com");
-const socket = io("http://localhost:3001/");
+const socket = io("https://chatxnode.onrender.com");
+// const socket = io("http://localhost:3001/");
 
 function CreateRoomPage() {
   const [roomKey, setRoomKey] = useState("");
