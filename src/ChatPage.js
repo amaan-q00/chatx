@@ -56,25 +56,31 @@ function ChatPage() {
     }
   };
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      let chatMsgObj = {
-        text: file,
-        room: roomKey,
-        owner: location.state.name,
-        type: "image",
-        members: null,
-        timeStamp: getFormattedTimestamp(),
-      };
+  const file = e.target.files[0];
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        chatMsgObj.text = reader.result;
-      };
-      reader.readAsDataURL(file);
+  if (file) {
+    let chatMsgObj = {
+      text: "Uploading...", // Displaying an uploading status
+      room: roomKey,
+      owner: location.state.name,
+      type: "image",
+      members: null,
+      timeStamp: getFormattedTimestamp(),
+    };
+
+    setMessageInput("");
+    setMessages((prevMessages) => [...prevMessages, chatMsgObj]); // Add the uploading status message
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      chatMsgObj.text = reader.result;
       socket.emit("chat message", chatMsgObj);
-    }
-  };
+    };
+
+    reader.readAsDataURL(file);
+  }
+};
+
   let copyToClipBoard = async () => {
     await navigator.clipboard.writeText(roomKey);
   };
