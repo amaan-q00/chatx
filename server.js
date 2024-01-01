@@ -5,7 +5,9 @@ const app = express();
 const server = http.createServer(app);
 const cors = require("cors"); // Import the cors middleware
 const { v4: uuidv4 } = require("uuid");
+// var siofu = require("socketio-file-upload");
 const io = new Server(server, {
+  maxHttpBufferSize: 1e8, // 100 MB
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
@@ -13,14 +15,15 @@ const io = new Server(server, {
 });
 
 const corsOptions = {
-  origin: "https://sweet-chatx-18a218.netlify.app", // Replace with your frontend origin
-  // origin: "http://localhost:3002/",
+  // origin: "https://sweet-chatx-18a218.netlify.app", // Replace with your frontend origin
+  origin: "http://localhost:3002/",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
   optionsSuccessStatus: 204,
 };
 
 app.use(cors(corsOptions));
+// app.use(siofu.router)
 app.get("/ping", (req, res) => res.send("pong"));
 let connectedUsers = {};
 function getFormattedTimestamp() {
@@ -38,6 +41,19 @@ function getFormattedTimestamp() {
   return timestamp;
 }
 io.on("connection", (socket) => {
+  // var uploader = new siofu();
+  //   // uploader.dir = "/uploads";
+  //   uploader.listen(socket);
+  //   uploader.on('progress', function(event) {
+  //     console.log(event.file.bytesLoaded / event.file.size)
+  //     socket.emit('upload.progress', {
+  //       percentage:(event.file.bytesLoaded / event.file.size) * 100
+  //     })
+  // });
+  
+  //   uploader.on("error", function(event){
+  //     console.log('error', error)
+  // });
   socket.on("disconnect", () => {
     let disconnectedUserDetails = connectedUsers[socket.id];
     delete connectedUsers[socket.id];
@@ -56,7 +72,6 @@ io.on("connection", (socket) => {
   });
   // Handle chat messages
   socket.on("chat message", (message) => {
-    console.log(message.text);
     io.sockets.emit(message.room, message);
   });
 

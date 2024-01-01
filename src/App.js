@@ -3,6 +3,12 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import CreateRoomPage from "./CreateRoomPage";
 import ChatPage from "./ChatPage";
 import "./App.css";
+import io from "socket.io-client";
+
+// const socket = io("https://chatxnode.onrender.com");
+const socket = io("http://localhost:3001/",{
+  maxHttpBufferSize: 1e8 // 100 MB
+});
 
 function App() {
   useEffect(() => {
@@ -23,8 +29,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" exact element={<CreateRoomPage />} />
-        <Route path="/chat/:roomKey" element={<ChatPage />} />
+        <Route path="/" exact element={<CreateRoomPage socket={socket}/>} />
+        <Route path="/chat/:roomKey" element={<ChatPage socket={socket}/>} />
       </Routes>
     </Router>
   );

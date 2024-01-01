@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import io from "socket.io-client";
 import { useReactToPrint } from "react-to-print";
+import SocketIOFileUpload from "socketio-file-upload"
+function ChatPage({socket}) {
 
-const socket = io("https://chatxnode.onrender.com");
-// const socket = io("http://localhost:3001/");
-
-function ChatPage() {
   const { roomKey } = useParams();
   const location = useLocation();
+  let uploadRef=useRef()
+  let [uploadProgress,setUploadProgress]=useState(false)
   const [messages, setMessages] = useState([]);
   const [visibleMessages, setVisibleMessages] = useState(50);
   let [members, setMembers] = useState([]);
@@ -24,9 +23,30 @@ function ChatPage() {
       behaviour: "smooth",
     });
   };
+  // useEffect(() => {
+  //   var uploader = new SocketIOFileUpload(socket);
+  //   if(uploadRef){
+  //     uploader.listenOnInput(uploadRef?.current);
+  //   }
+  //   uploader.addEventListener("progress", function(event){
+  //     var percent = event.bytesLoaded / event.file.size * 100;
+  //     console.log("File is", percent.toFixed(2), "percent loaded");
+  // });
+
+  // // Do something when a file is uploaded:
+  // uploader.addEventListener("complete", function(event){
+  //   setUploadProgress(null)
+  //     // console.log(event.success);
+  //     // console.log(event.file);
+  // });
+  //   // return () => {
+      
+  //   // }
+  // }, [uploadRef])
+  
   useEffect(() => {
     socket.connect();
-
+    
     // Listen for incoming messages
     socket.on(roomKey, (message) => {
       if (message.members) {
@@ -38,8 +58,13 @@ function ChatPage() {
         scrollToBottom();
       }, 100);
     });
+
+    // socket.on("upload.progress",({percentage})=>{
+    //   setUploadProgress(percentage)
+    // })
     // Join the specified room when the component mounts
     socket.emit("join room", { roomKey, nickName: location.state.name });
+    
   }, []);
   const sendMessage = () => {
     if (messageInput.trim() !== "") {
@@ -56,8 +81,15 @@ function ChatPage() {
     }
   };
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+    let file=e.target.files[0]
+    
     if (file) {
+      if(uploadRef?.current){
+
+        uploadRef.current.style="display:block;"
+        scrollToBottom()
+      }
+      
       let chatMsgObj = {
         text: file,
         room: roomKey,
@@ -68,9 +100,14 @@ function ChatPage() {
       };
 
       const reader = new FileReader();
+      // reader.onprogress = (e) => {
+      //   setUploadProgress(true)
+      // };
       reader.onloadend = () => {
+        // setUploadProgress(false)
         chatMsgObj.text = reader.result;
       };
+
       reader.readAsDataURL(file);
       socket.emit("chat message", chatMsgObj);
     }
@@ -88,10 +125,22 @@ function ChatPage() {
     content: () => messageList.current,
   });
   const renderBufferAsImage = (buffer) => {
-    const uint8Array = new Uint8Array(buffer);
-    const base64String = btoa(String.fromCharCode.apply(null, uint8Array));
+    // if(!uploadProgress){
+
+    //   setUploadProgress(true)
+    // }
+    let base64String=btoa(new Uint8Array(buffer).reduce(function (data, byte) {
+      return data + String.fromCharCode(byte);
+  }, ''));
+    // const uint8Array = new Uint8Array(buffer);
+    // const base64String = btoa(String.fromCharCode.apply(null, uint8Array));
+    if(uploadRef?.current){
+
+      uploadRef.current.style="display:none;"
+    }
     return `data:image/png;base64,${base64String}`;
   };
+  
   function getFormattedTimestamp() {
     const options = {
       weekday: "long",
@@ -145,6 +194,8 @@ function ChatPage() {
               Load More
             </button>
           )}
+         
+         
           {messagesToShow.map((message, index) => {
             if (message.type == "info") {
               return (
@@ -197,10 +248,16 @@ function ChatPage() {
             } else {
             }
           })}
+            {<li className={`info-message-item message-item`} ref={uploadRef} style={{display:"none"}}>
+                  <span className={`info-message-text`}>Uploading...</span>
+                </li>}
         </ul>
+       
         <div className="message-input-container">
           <label className="img-btn">
             <input
+            // ref={uploadRef}
+            // id="siofu_input"
               className="img-btn-picker"
               type="file"
               accept="image/*"

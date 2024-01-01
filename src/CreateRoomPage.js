@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import io from "socket.io-client";
 
-const socket = io("https://chatxnode.onrender.com");
-// const socket = io("http://localhost:3001/");
 
-function CreateRoomPage() {
+function CreateRoomPage({socket}) {
   const [roomKey, setRoomKey] = useState("");
   const nav = useNavigate();
   useEffect(() => {
+    socket.connect();
     socket.on("room created", ({ key, nickName }) => {
       nav(`/chat/${key}`, { state: { name: nickName }, replace: true });
     });
@@ -16,12 +14,16 @@ function CreateRoomPage() {
 
   const createRoom = () => {
     let prompt = window.prompt("NickName: ");
-    socket.emit("create room", prompt);
+    if(prompt){
+      socket.emit("create room", prompt);
+    }
   };
 
   const joinRoom = () => {
     let prompt = window.prompt("NickName: ");
-    nav(`/chat/${roomKey}`, { state: { name: prompt }, replace: true });
+    if(prompt){
+      nav(`/chat/${roomKey}`, { state: { name: prompt }, replace: true });
+    }
   };
 
   return (
