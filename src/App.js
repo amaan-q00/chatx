@@ -6,9 +6,13 @@ import "./App.css";
 import io from "socket.io-client";
 
 // const socket = io("https://chatxnode.onrender.com");
-const socket = io("http://localhost:3001/",{
+const socket = io(
+  // "http://localhost:3001/",
+  "https://chatxnode.onrender.com",
+  {
   maxHttpBufferSize: 1e8 // 100 MB
 });
+
 
 function App() {
   useEffect(() => {

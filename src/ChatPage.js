@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
-import SocketIOFileUpload from "socketio-file-upload"
+// import SocketIOFileUpload from "socketio-file-upload"
 function ChatPage({socket}) {
 
   const { roomKey } = useParams();
   const location = useLocation();
   let uploadRef=useRef()
-  let [uploadProgress,setUploadProgress]=useState(false)
+  // let [uploadProgress,setUploadProgress]=useState(false)
   const [messages, setMessages] = useState([]);
   const [visibleMessages, setVisibleMessages] = useState(50);
   let [members, setMembers] = useState([]);
